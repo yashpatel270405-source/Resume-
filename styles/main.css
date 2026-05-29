@@ -2395,4 +2395,65 @@ textarea.form-control {
   color: var(--text-muted);
 }
 
+/* Premium Navbar Layout & Button Organization */
+.logo {
+  flex-shrink: 0 !important;
+}
+
+.nav-links {
+  flex-shrink: 0 !important;
+  gap: 28px !important;
+}
+
+.navbar .nav-actions,
+.navbar-internal .nav-actions {
+  gap: 10px !important; /* Slightly tighter gap to organize and prevent squishing */
+}
+
+/* Re-organize navbar buttons into clean, low-profile navigation controls */
+.navbar .btn,
+.navbar-internal .btn {
+  padding: 6px 12px !important; /* Compact modern padding for navbar actions */
+  font-size: 0.82rem !important; /* Elegant modern label sizing */
+  height: 36px !important; /* Standardize button heights in navbar */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--radius-md) !important;
+}
+
+/* Secondary navbar buttons styled as clean, borderless items */
+.navbar .btn-secondary,
+.navbar-internal .btn-secondary {
+  border: 1px solid transparent !important; /* Remove prominent boundaries */
+  background-color: transparent !important;
+  color: var(--text-muted) !important;
+  font-weight: 500 !important;
+}
+
+.navbar .btn-secondary:hover,
+.navbar-internal .btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-main) !important;
+  border-color: transparent !important;
+}
+
+/* Polish upgrade button in navbar to fit nicely */
+.navbar .btn-premium-upgrade,
+.navbar-internal .btn-premium-upgrade {
+  height: 36px !important;
+  padding: 6px 12px !important;
+  font-size: 0.82rem !important;
+  margin-right: 0 !important;
+}
+
+/* Red accent hover for Sign Out to prevent visual clutter but look sharp */
+.navbar .btn-sign-out:hover,
+.navbar-internal .btn-sign-out:hover {
+  background-color: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+  border-color: transparent !important;
+}
+
+
 
