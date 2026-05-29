@@ -22,55 +22,86 @@ async function downloadPDF(resumeTitle) {
         let premiumUntilStr = metadata.premium_until || '';
         let lastResetStr = metadata.last_download_reset || '';
         
-        // Expiration fallback double-check
+        let updatesToMake = {};
+        let needsUpdate = false;
+        
+        // A. Initial defaults fallback
+        if (metadata.is_premium === undefined) {
+          isPremium = false;
+          updatesToMake.is_premium = false;
+          needsUpdate = true;
+        }
+        if (metadata.downloads_this_month === undefined) {
+          downloads = 0;
+          updatesToMake.downloads_this_month = 0;
+          needsUpdate = true;
+        }
+        if (!lastResetStr) {
+          lastResetStr = new Date().toISOString();
+          updatesToMake.last_download_reset = lastResetStr;
+          needsUpdate = true;
+        }
+        
+        // B. Expiration fallback double-check
         if (isPremium && premiumUntilStr) {
           if (new Date() > new Date(premiumUntilStr)) {
             // Subscription expired! We'll reset it to false
             isPremium = false;
-            await supabaseClient.auth.updateUser({ data: { is_premium: false } });
+            updatesToMake.is_premium = false;
+            needsUpdate = true;
+            
+            // Push any collected updates to DB before alerting
+            await supabaseClient.auth.updateUser({ data: updatesToMake });
             if (typeof syncAuthUI === 'function') await syncAuthUI();
+            
             alert("Your premium subscription has expired. Please upgrade to continue downloading resumes!");
             if (typeof openPricingModal === 'function') openPricingModal();
             return;
           }
         }
         
-        // 30-day quota reset check
+        // C. 30-day quota reset check
         if (lastResetStr) {
           const lastReset = new Date(lastResetStr);
           const daysDiff = (new Date() - lastReset) / (1000 * 60 * 60 * 24);
           if (daysDiff >= 30) {
             downloads = 0;
             lastResetStr = new Date().toISOString();
-            await supabaseClient.auth.updateUser({ 
-              data: { 
-                downloads_this_month: 0, 
-                last_download_reset: lastResetStr 
-              } 
-            });
-            if (typeof syncAuthUI === 'function') await syncAuthUI();
-            console.log("[Quota Engine] 30 days passed. Reset downloads count to 0 in DB.");
+            updatesToMake.downloads_this_month = 0;
+            updatesToMake.last_download_reset = lastResetStr;
+            needsUpdate = true;
+            console.log("[Quota Engine] 30 days passed. Resetting downloads in DB.");
           }
-        } else {
-          // Initialize last_download_reset if missing
-          lastResetStr = new Date().toISOString();
-          await supabaseClient.auth.updateUser({ data: { last_download_reset: lastResetStr } });
         }
         
-        // Quota Guard Interception
+        // D. Quota Guard Interception
         if (!isPremium && downloads >= 2) {
           console.warn("[Quota Intercept] Free limit reached.");
           alert("🔒 Limit Reached: You have already used your 2 free resume downloads for this month. Please upgrade to the Premium Plan to unlock unlimited downloads!");
           if (typeof openPricingModal === 'function') openPricingModal();
+          
+          // Sync default fields if needed before exiting
+          if (needsUpdate) {
+            await supabaseClient.auth.updateUser({ data: updatesToMake });
+            if (typeof syncAuthUI === 'function') await syncAuthUI();
+          }
           return;
         }
         
-        // Increment Free download count *before* generation
+        // E. Increment Free download count *before* generation
         if (!isPremium) {
           downloads += 1;
-          await supabaseClient.auth.updateUser({ data: { downloads_this_month: downloads } });
-          if (typeof syncAuthUI === 'function') await syncAuthUI();
+          updatesToMake.downloads_this_month = downloads;
+          needsUpdate = true;
           console.log(`[Quota Engine] Incrementing download count to ${downloads} / 2.`);
+        }
+        
+        // F. Push all collected updates to Supabase in a single, atomic call!
+        if (needsUpdate) {
+          console.log("[Quota Engine] Syncing metadata updates atomically:", updatesToMake);
+          const { error } = await supabaseClient.auth.updateUser({ data: updatesToMake });
+          if (error) throw error;
+          if (typeof syncAuthUI === 'function') await syncAuthUI();
         }
       }
     } catch (err) {
