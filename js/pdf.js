@@ -17,19 +17,44 @@ async function downloadPDF(resumeTitle) {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session && session.user) {
         const metadata = session.user.user_metadata || {};
-        const isPremium = !!metadata.is_premium;
+        let isPremium = !!metadata.is_premium;
         let downloads = parseInt(metadata.downloads_this_month) || 0;
+        let premiumUntilStr = metadata.premium_until || '';
+        let lastResetStr = metadata.last_download_reset || '';
         
         // Expiration fallback double-check
-        if (isPremium && metadata.premium_until) {
-          if (new Date() > new Date(metadata.premium_until)) {
+        if (isPremium && premiumUntilStr) {
+          if (new Date() > new Date(premiumUntilStr)) {
             // Subscription expired! We'll reset it to false
+            isPremium = false;
             await supabaseClient.auth.updateUser({ data: { is_premium: false } });
             if (typeof syncAuthUI === 'function') await syncAuthUI();
             alert("Your premium subscription has expired. Please upgrade to continue downloading resumes!");
             if (typeof openPricingModal === 'function') openPricingModal();
             return;
           }
+        }
+        
+        // 30-day quota reset check
+        if (lastResetStr) {
+          const lastReset = new Date(lastResetStr);
+          const daysDiff = (new Date() - lastReset) / (1000 * 60 * 60 * 24);
+          if (daysDiff >= 30) {
+            downloads = 0;
+            lastResetStr = new Date().toISOString();
+            await supabaseClient.auth.updateUser({ 
+              data: { 
+                downloads_this_month: 0, 
+                last_download_reset: lastResetStr 
+              } 
+            });
+            if (typeof syncAuthUI === 'function') await syncAuthUI();
+            console.log("[Quota Engine] 30 days passed. Reset downloads count to 0 in DB.");
+          }
+        } else {
+          // Initialize last_download_reset if missing
+          lastResetStr = new Date().toISOString();
+          await supabaseClient.auth.updateUser({ data: { last_download_reset: lastResetStr } });
         }
         
         // Quota Guard Interception

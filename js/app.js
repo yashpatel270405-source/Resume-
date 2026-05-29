@@ -1291,58 +1291,26 @@ async function syncAuthUI(passedSession = undefined) {
       let premiumUntilStr = metadata.premium_until || '';
       let lastResetStr = metadata.last_download_reset || '';
       
-      let updatesNeeded = false;
-      const updatedData = {};
-      
-      // 1. Initial defaults fallback
-      if (metadata.is_premium === undefined) {
-        isPremium = false;
-        updatedData.is_premium = false;
-        updatesNeeded = true;
-      }
-      if (metadata.downloads_this_month === undefined) {
-        downloads = 0;
-        updatedData.downloads_this_month = 0;
-        updatesNeeded = true;
-      }
-      if (!lastResetStr) {
-        lastResetStr = new Date().toISOString();
-        updatedData.last_download_reset = lastResetStr;
-        updatesNeeded = true;
-      }
-      
-      // 2. Validate active premium period
+      // 1. Dynamic validation of active premium period in UI
       if (isPremium && premiumUntilStr) {
         const premiumUntil = new Date(premiumUntilStr);
         if (new Date() > premiumUntil) {
           isPremium = false;
-          updatedData.is_premium = false;
-          updatesNeeded = true;
-          console.log("[Quota Engine] Premium subscription has expired.");
+          console.log("[Quota Engine UI] Premium subscription has expired dynamically.");
         }
       }
       
-      // 3. Monthly download quota auto-resets (resets 30 days after last_download_reset)
+      // 2. Dynamic monthly download quota auto-resets in UI (30 days after last_download_reset)
       if (lastResetStr) {
         const lastReset = new Date(lastResetStr);
         const daysDiff = (new Date() - lastReset) / (1000 * 60 * 60 * 24);
         if (daysDiff >= 30) {
           downloads = 0;
-          lastResetStr = new Date().toISOString();
-          updatedData.downloads_this_month = 0;
-          updatedData.last_download_reset = lastResetStr;
-          updatesNeeded = true;
-          console.log("[Quota Engine] 30 days have passed. Resetting downloads count.");
+          console.log("[Quota Engine UI] 30 days have passed. Resetting downloads dynamically.");
         }
       }
       
-      // 4. Client-side update Supabase context if any defaults or resets triggered
-      if (updatesNeeded) {
-        console.log("[Quota Engine] Syncing updated user metadata to Supabase...", updatedData);
-        await supabaseClient.auth.updateUser({ data: updatedData });
-      }
-      
-      // 5. Update UI displays based on Plan state
+      // 3. Update UI displays based on Plan state
       if (isPremium) {
         // Subscribed Premium Plan Display
         upgradeBtns.forEach(btn => {
