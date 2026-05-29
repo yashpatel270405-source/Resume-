@@ -1228,10 +1228,15 @@ async function handleSignOut() {
   if (!confirm("Are you sure you want to sign out?")) return;
   
   try {
+    // Explicitly hide all Sign Out buttons immediately in the UI to prevent any state update delay
+    document.querySelectorAll('.btn-sign-out').forEach(btn => {
+      btn.style.display = 'none';
+    });
+
     const { error } = await supabaseClient.auth.signOut();
     if (error) throw error;
     
-    syncAuthUI();
+    await syncAuthUI();
     alert("You have successfully signed out!");
     
     // Redirect to home or dashboard
