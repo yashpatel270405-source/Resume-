@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResuBuild | Professional AI-Powered Resume Builder</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Build stunning, modern, and ATS-friendly resumes in minutes. Choose from premium templates and download clean vector PDFs instantly.">
+  <meta name="keywords" content="resume builder, cv builder, curriculum vitae, free resume maker, professional resume, ats friendly resume">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/main.css?v=1.2">
+  <link rel="stylesheet" href="styles/templates.css">
+  <!-- html2pdf.js Library for high-fidelity browser PDF generation -->
+  <script src="js/html2pdf.bundle.min.js"></script>
+  <!-- Razorpay Checkout SDK for premium billing flows -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+  <!-- Hidden File Input for Resume upload/improving -->
+  <input type="file" id="resume-upload-input" accept=".json,.pdf,.docx,.txt" style="display: none;">
+
+  <!-- SPA Router Shell -->
+  <div id="app">
+
+    <!-- HOMEPAGE SECTION -->
+    <section id="homepage" class="spa-view active">
+      <!-- Header / Nav -->
+      <header class="navbar">
+        <div class="container nav-container">
+          <a href="#home" class="logo">
+            <span class="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+            </span>
+            <span class="logo-text">ResuBuild</span>
+          </a>
+          <nav class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#templates">Templates</a>
+            <a href="#testimonials">Testimonials</a>
+          </nav>
+          <div class="nav-actions">
+            <!-- Theme Controller Widget -->
+            <div class="theme-switcher">
+              <button class="btn-theme-trigger" onclick="toggleThemeDropdown(event)" title="Choose Theme">
+                <span class="current-theme-icon">🌙</span>
+              </button>
+              <div class="theme-dropdown">
+                <button class="theme-opt" onclick="setAppTheme('light')">☀️ Light</button>
+                <button class="theme-opt active" onclick="setAppTheme('dark')">🌙 Dark</button>
+                <button class="theme-opt" onclick="setAppTheme('system')">💻 System</button>
+              </div>
+            </div>
+            
+            <button class="btn btn-premium-upgrade" onclick="openPricingModal()" id="btn-upgrade-homepage" style="display: none;">👑 Upgrade</button>
+            <a href="#dashboard" class="btn btn-secondary">My Dashboard</a>
+            <button class="btn btn-secondary btn-upload-trigger">Improve my Resume</button>
+            <a href="#editor?new=true" class="btn btn-primary btn-glow">Build Resume</a>
+            <button class="btn btn-secondary btn-sign-out" style="display: none;" onclick="handleSignOut()">Sign Out</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Hero Section -->
+      <section id="hero" class="hero-section">
+        <div class="hero-bg-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+        </div>
+        <div class="container hero-container">
+          <div class="hero-content">
+            <h1 class="hero-title animate-slide-up">
+              Craft a Professional Resume <span class="gradient-text">That Wins Jobs</span>
+            </h1>
+            <p class="hero-description animate-slide-up-delayed">
+              Land your dream role with our lightning-fast, highly responsive resume builder. Select from professional, ATS-optimized templates, customize layouts instantly, and download pixel-perfect PDFs for free.
+            </p>
+            <div class="hero-buttons animate-slide-up-delayed-more">
+              <a href="#editor?new=true" class="btn btn-primary btn-lg btn-glow">
+                Create New Resume
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="btn-arrow">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </a>
+              <button class="btn btn-secondary btn-lg btn-upload-trigger">Improve my Resume</button>
+              <a href="#templates" class="btn btn-secondary btn-lg">Explore Templates</a>
+            </div>
+            <div class="hero-stats animate-slide-up-delayed-more">
+              <div class="stat-item">
+                <span class="stat-val">300k+</span>
+                <span class="stat-lbl">Resumes Built</span>
+              </div>
+              <div class="stat-separator"></div>
+              <div class="stat-item">
+                <span class="stat-val">98%</span>
+                <span class="stat-lbl">ATS Pass Rate</span>
+              </div>
+              <div class="stat-separator"></div>
+              <div class="stat-item">
+                <span class="stat-val">0s</span>
+                <span class="stat-lbl">Setup Time</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-preview animate-scale-in">
+            <div class="floating-resume-card card-1">
+              <span class="card-title">Minimalist Template</span>
+              <span class="card-subtitle">Recommended for Tech & Design</span>
+              <div class="card-bar-group">
+                <div class="card-bar w-80"></div>
+                <div class="card-bar w-50"></div>
+              </div>
+            </div>
+            <div class="floating-resume-card card-2">
+              <span class="card-title">ATS Passed!</span>
+              <span class="card-tag tag-success">Score: 97%</span>
+              <div class="card-bar-group">
+                <div class="card-bar w-90"></div>
+              </div>
+            </div>
+            <div class="resume-hero-mockup">
+              <div class="mockup-header">
+                <div class="mockup-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="mockup-title">Live Preview</div>
+              </div>
+              <div class="mockup-body">
+                <div class="mockup-avatar"></div>
+                <div class="mockup-text-block">
+                  <div class="mockup-line header-line"></div>
+                  <div class="mockup-line sub-line"></div>
+                  <div class="mockup-grid">
+                    <div class="mockup-column col-7">
+                      <div class="mockup-line heading"></div>
+                      <div class="mockup-line text"></div>
+                      <div class="mockup-line text"></div>
+                      <div class="mockup-line heading"></div>
+                      <div class="mockup-line text"></div>
+                    </div>
+                    <div class="mockup-column col-5">
+                      <div class="mockup-line heading"></div>
+                      <div class="mockup-line pill"></div>
+                      <div class="mockup-line pill"></div>
+                      <div class="mockup-line pill"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section id="features" class="features-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Features Designed to Win Recruiters</h2>
+            <p class="section-subtitle">Everything you need to create a modern, job-winning curriculum vitae without any complexity.</p>
+          </div>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon-wrapper color-purple">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+              </div>
+              <h3 class="feature-title">Real-Time Fluid Preview</h3>
+              <p class="feature-text">See changes instantly as you type. Our scale-to-fit document engine shows exactly how your resume will look in print.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-wrapper color-blue">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                </svg>
+              </div>
+              <h3 class="feature-title">100% ATS-Friendly</h3>
+              <p class="feature-text">Our templates are structured strictly according to recursive recruiter standards to maximize parsing and scoring.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-wrapper color-green">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+              </div>
+              <h3 class="feature-title">Complete Data Privacy</h3>
+              <p class="feature-text">Your personal details never touch our servers. Everything is processed and stored locally on your own machine.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-wrapper color-orange">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.991l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <h3 class="feature-title">Fully Customizable</h3>
+              <p class="feature-text">Swap font pairings, shift margins, pick curated color palettes, or modify sections dynamically in just a couple of clicks.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Templates Section -->
+      <section id="templates" class="templates-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Vetted Templates Built For Success</h2>
+            <p class="section-subtitle">Click on any template to instantly load it into the editor with mock data.</p>
+          </div>
+          <div class="templates-grid">
+            <!-- Minimalist Template Card -->
+            <div class="template-card-preview" data-template="minimalist">
+              <div class="template-thumb-wrapper">
+                <div class="template-overlay">
+                  <span class="btn btn-primary">Use This Template</span>
+                </div>
+                <div class="mini-resume template-minimalist-mini">
+                  <div class="mini-line w-60 header"></div>
+                  <div class="mini-line w-40 sub"></div>
+                  <div class="mini-block"></div>
+                  <div class="mini-block"></div>
+                </div>
+              </div>
+              <div class="template-info">
+                <h3 class="template-name">Minimalist</h3>
+                <p class="template-desc">Clean design emphasizing typography and structural spacing.</p>
+              </div>
+            </div>
+
+            <!-- Professional Template Card -->
+            <div class="template-card-preview" data-template="professional">
+              <div class="template-thumb-wrapper">
+                <div class="template-overlay">
+                  <span class="btn btn-primary">Use This Template</span>
+                </div>
+                <div class="mini-resume template-professional-mini">
+                  <div class="mini-header-block"></div>
+                  <div class="mini-split">
+                    <div class="mini-col-7">
+                      <div class="mini-line w-90"></div>
+                      <div class="mini-block"></div>
+                    </div>
+                    <div class="mini-col-5">
+                      <div class="mini-block"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="template-info">
+                <h3 class="template-name">Professional</h3>
+                <p class="template-desc">Traditional corporate styling optimized for executive & tech roles.</p>
+              </div>
+            </div>
+
+            <!-- Creative Template Card -->
+            <div class="template-card-preview" data-template="creative">
+              <div class="template-thumb-wrapper">
+                <div class="template-overlay">
+                  <span class="btn btn-primary">Use This Template</span>
+                </div>
+                <div class="mini-resume template-creative-mini">
+                  <div class="mini-sidebar-layout">
+                    <div class="mini-sidebar">
+                      <div class="mini-circle"></div>
+                      <div class="mini-line w-70"></div>
+                    </div>
+                    <div class="mini-main">
+                      <div class="mini-line w-90"></div>
+                      <div class="mini-block"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="template-info">
+                <h3 class="template-name">Creative</h3>
+                <p class="template-desc">Expressive layout with vertical highlights and beautiful accents.</p>
+              </div>
+            </div>
+
+            <!-- Executive Template Card -->
+            <div class="template-card-preview" data-template="executive">
+              <div class="template-thumb-wrapper">
+                <div class="template-overlay">
+                  <span class="btn btn-primary">Use This Template</span>
+                </div>
+                <div class="mini-resume template-executive-mini">
+                  <div class="mini-center-header">
+                    <div class="mini-line w-40 centered"></div>
+                    <div class="mini-line w-20 centered"></div>
+                  </div>
+                  <div class="mini-block"></div>
+                  <div class="mini-block"></div>
+                </div>
+              </div>
+              <div class="template-info">
+                <h3 class="template-name">Executive</h3>
+                <p class="template-desc">Centered classical layout utilizing striking elegant fonts.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials Section -->
+      <section id="testimonials" class="testimonials-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Loved by Job Seekers Everywhere</h2>
+            <p class="section-subtitle">Here is how our users successfully landed offers at top-tier organizations.</p>
+          </div>
+          <div class="testimonials-slider">
+            <div class="testimonial-card">
+              <div class="stars">★★★★★</div>
+              <p class="testimonial-text">"I was struggling to format my resume properly for PDF printing. ResuBuild auto-aligned everything, and the layout looks incredibly elegant. Got multiple calls within a week!"</p>
+              <div class="testimonial-author">
+                <div class="author-avatar av-1"></div>
+                <div class="author-info">
+                  <span class="author-name">Sarah Jenkins</span>
+                  <span class="author-role">Software Engineer at Figma</span>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="stars">★★★★★</div>
+              <p class="testimonial-text">"The real-time preview is extremely smooth. I changed my spacing and accent colors in two clicks. Best of all, it's 100% free and didn't spam me to register!"</p>
+              <div class="testimonial-author">
+                <div class="author-avatar av-2"></div>
+                <div class="author-info">
+                  <span class="author-name">Marcus Chen</span>
+                  <span class="author-role">Product Marketing Manager</span>
+                </div>
+              </div>
+            </div>
+            <div class="testimonial-card">
+              <div class="stars">★★★★★</div>
+              <p class="testimonial-text">"Superb experience. The templates are genuinely ATS optimized—my parser score shot up to 96%. I highly recommend the Executive template for manager profiles."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar av-3"></div>
+                <div class="author-info">
+                  <span class="author-name">Elizabeth Vance</span>
+                  <span class="author-role">Director of Operations</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Section -->
+      <footer class="footer">
+        <div class="container footer-container">
+          <div class="footer-brand">
+            <a href="#home" class="logo">
+              <span class="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+              </span>
+              <span class="logo-text">ResuBuild</span>
+            </a>
+            <p class="footer-tagline">Building a beautiful career future, one clean PDF page at a time. No data tracking, complete privacy.</p>
+          </div>
+          <div class="footer-links-group">
+            <div class="footer-col">
+              <h4>Navigation</h4>
+              <a href="#features">Features</a>
+              <a href="#templates">Templates</a>
+              <a href="#testimonials">Testimonials</a>
+            </div>
+            <div class="footer-col">
+              <h4>Workspace</h4>
+              <a href="#dashboard">My Dashboard</a>
+              <a href="#editor?new=true">New Resume</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="container footer-bottom-container">
+            <p class="copyright">&copy; 2026 ResuBuild. Built with modern, pure vanilla technologies. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </section>
+
+
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboard" class="spa-view">
+      <header class="navbar navbar-internal">
+        <div class="container nav-container">
+          <a href="#home" class="logo">
+            <span class="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+            </span>
+            <span class="logo-text">ResuBuild</span>
+          </a>
+          <span class="view-tag">Dashboard</span>
+          <div class="nav-actions">
+            <!-- Theme Controller Widget -->
+            <div class="theme-switcher">
+              <button class="btn-theme-trigger" onclick="toggleThemeDropdown(event)" title="Choose Theme">
+                <span class="current-theme-icon">🌙</span>
+              </button>
+              <div class="theme-dropdown">
+                <button class="theme-opt" onclick="setAppTheme('light')">☀️ Light</button>
+                <button class="theme-opt active" onclick="setAppTheme('dark')">🌙 Dark</button>
+                <button class="theme-opt" onclick="setAppTheme('system')">💻 System</button>
+              </div>
+            </div>
+            
+            <!-- Premium Quota Badge -->
+            <div class="quota-display-badge" onclick="openPricingModal()" id="dashboard-quota-badge" style="display: none;">
+              <span id="quota-display-text">Downloads: 0 / 2 Free</span>
+            </div>
+            <button class="btn btn-premium-upgrade" onclick="openPricingModal()" id="btn-upgrade-dashboard" style="display: none;">👑 Upgrade</button>
+            <a href="#home" class="btn btn-secondary">Home</a>
+            <button class="btn btn-secondary btn-upload-trigger">Improve my Resume</button>
+            <button id="dashboard-new-btn" class="btn btn-primary">Create New Resume</button>
+            <button class="btn btn-secondary btn-sign-out" style="display: none;" onclick="handleSignOut()">Sign Out</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="container dashboard-main">
+        <div class="dashboard-widgets">
+          <div class="widget-card widget-hero">
+            <div class="widget-content">
+              <h2>Welcome back to your workspace!</h2>
+              <p>Create and edit multiple resumes instantly. Everything is automatically saved to your browser cache.</p>
+            </div>
+            <button id="dashboard-quickstart" class="btn btn-white">
+              <span>Quick Start</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </button>
+          </div>
+          <div class="widget-card stats-subcard">
+            <h3>Saved Drafts</h3>
+            <span class="stats-number" id="stats-count">0</span>
+            <span class="stats-label">Active Resumes</span>
+          </div>
+        </div>
+
+        <div class="dashboard-header-bar">
+          <h3>Your Saved Resumes</h3>
+          <div class="search-bar-wrapper">
+            <span class="search-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </span>
+            <input type="text" id="resume-search" placeholder="Search resumes...">
+          </div>
+        </div>
+
+        <!-- Saved Resumes Grid -->
+        <div class="resumes-grid" id="resumes-list-container">
+          <!-- Populated dynamically via JS -->
+          <div class="empty-state-card" id="resumes-empty-state">
+            <div class="empty-icon">📂</div>
+            <h4>No resumes yet</h4>
+            <p>Get started by building your very first professional resume.</p>
+            <button id="empty-state-create-btn" class="btn btn-primary">Create Resume</button>
+          </div>
+        </div>
+      </main>
+    </section>
+
+
+    <!-- RESUME EDITOR SECTION -->
+    <section id="editor" class="spa-view">
+      <header class="navbar navbar-internal editor-navbar">
+        <div class="nav-container-fluid">
+          <div class="navbar-left">
+            <a href="#dashboard" class="btn btn-secondary back-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+              </svg>
+              <span>Dashboard</span>
+            </a>
+            <div class="editor-title-container">
+              <input type="text" id="resume-title-input" class="resume-title-editable" value="Untitled Resume">
+              <span class="save-status-badge success" id="save-status">
+                <span class="dot"></span> Saved locally
+              </span>
+            </div>
+          </div>
+          <div class="navbar-right">
+            <!-- Theme Controller Widget -->
+            <div class="theme-switcher">
+              <button class="btn-theme-trigger" onclick="toggleThemeDropdown(event)" title="Choose Theme">
+                <span class="current-theme-icon">🌙</span>
+              </button>
+              <div class="theme-dropdown">
+                <button class="theme-opt" onclick="setAppTheme('light')">☀️ Light</button>
+                <button class="theme-opt active" onclick="setAppTheme('dark')">🌙 Dark</button>
+                <button class="theme-opt" onclick="setAppTheme('system')">💻 System</button>
+              </div>
+            </div>
+            
+            <!-- Styling Controls Quick Picker -->
+            <div class="toolbar-dropdown-wrapper">
+              <label for="template-select">Layout:</label>
+              <select id="template-select" class="form-control-inline">
+                <option value="minimalist">Minimalist</option>
+                <option value="professional">Professional</option>
+                <option value="creative">Creative</option>
+                <option value="executive">Executive</option>
+              </select>
+            </div>
+            
+            <!-- Premium Quota Badge -->
+            <div class="quota-display-badge" onclick="openPricingModal()" id="editor-quota-badge" style="display: none;">
+              <span id="editor-quota-display-text">Downloads: 0 / 2 Free</span>
+            </div>
+            <button class="btn btn-premium-upgrade" onclick="openPricingModal()" id="btn-upgrade-editor" style="display: none;">👑 Upgrade</button>
+            
+            <button id="btn-save-resume" class="btn btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H4.5A1.5 1.5 0 0 0 3 5.25v13.5A1.5 1.5 0 0 0 4.5 20h15a1.5 1.5 0 0 0 1.5-1.5V6.72a1.5 1.5 0 0 0-.44-1.06l-3.3-3.3A1.5 1.5 0 0 0 16.28 2H15v3.75A1.5 1.5 0 0 1 13.5 7.25h-3A1.5 1.5 0 0 1 9 5.75V3.75zM12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+              </svg>
+              <span>Save Draft</span>
+            </button>
+            <button id="btn-print" class="btn btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 1.258a1.791 1.791 0 0 1-1.753 2.112H7.862a1.791 1.791 0 0 1-1.753-2.112L6.34 18M9 9V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V9m-6 3h6m-3-3h.008v.008H12V9z" />
+              </svg>
+              <span>Print CV</span>
+            </button>
+            <button id="btn-download-pdf" class="btn btn-primary btn-glow">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              <span>Download PDF</span>
+            </button>
+            <button class="btn btn-secondary btn-sign-out" style="display: none;" onclick="handleSignOut()">Sign Out</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Editor Workspace -->
+      <div class="editor-workspace">
+        
+        <!-- Left Panel: Input Forms -->
+        <div class="editor-sidebar-left">
+          
+          <!-- Category Tabs Navigator -->
+          <div class="sidebar-tabs-nav" id="editor-tabs-nav">
+            <button class="tab-nav-btn active" data-target="tab-design">🎨 Design</button>
+            <button class="tab-nav-btn" data-target="tab-personal">👤 Profile</button>
+            <button class="tab-nav-btn" data-target="tab-experience">💼 Experience</button>
+            <button class="tab-nav-btn" data-target="tab-education">🎓 Education</button>
+            <button class="tab-nav-btn" data-target="tab-projects">🚀 Projects</button>
+            <button class="tab-nav-btn" data-target="tab-skills">🛠️ Skills</button>
+            <button class="tab-nav-btn" data-target="tab-more">➕ More</button>
+          </div>
+
+          <!-- Tabs Content Panels -->
+          <div class="sidebar-tabs-container">
+            
+            <!-- DESIGN CUSTOMIZER TAB -->
+            <div class="tab-panel active" id="tab-design">
+              <h3 class="tab-panel-title">Design Customization</h3>
+              
+              <div class="design-section">
+                <label class="field-label">Layout Template</label>
+                <div class="template-selector-grid">
+                  <button class="layout-card-btn active" data-layout="minimalist">
+                    <span class="icon">📄</span>
+                    <span class="name">Minimalist</span>
+                  </button>
+                  <button class="layout-card-btn" data-layout="professional">
+                    <span class="icon">💼</span>
+                    <span class="name">Professional</span>
+                  </button>
+                  <button class="layout-card-btn" data-layout="creative">
+                    <span class="icon">🎨</span>
+                    <span class="name">Creative</span>
+                  </button>
+                  <button class="layout-card-btn" data-layout="executive">
+                    <span class="icon">🏛️</span>
+                    <span class="name">Executive</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="design-section mt-4">
+                <label class="field-label">App Theme Mode</label>
+                <div class="theme-selector-grid-editor">
+                  <button class="theme-editor-btn" id="theme-btn-light" onclick="setAppTheme('light')">
+                    <span class="icon">☀️</span>
+                    <span class="name">Light</span>
+                  </button>
+                  <button class="theme-editor-btn active" id="theme-btn-dark" onclick="setAppTheme('dark')">
+                    <span class="icon">🌙</span>
+                    <span class="name">Dark</span>
+                  </button>
+                  <button class="theme-editor-btn" id="theme-btn-system" onclick="setAppTheme('system')">
+                    <span class="icon">💻</span>
+                    <span class="name">System</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="design-section mt-4">
+                <label class="field-label">Global Typography & Font Pairings</label>
+                <div class="font-pairs-grid">
+                  <button class="font-pair-btn active" data-font-pair="inter-sans">
+                    <span class="preview-text f-inter">Inter</span>
+                    <span class="label">Sleek & Professional</span>
+                  </button>
+                  <button class="font-pair-btn" data-font-pair="jakarta-sans">
+                    <span class="preview-text f-jakarta">Jakarta</span>
+                    <span class="label">Modern Tech Layout</span>
+                  </button>
+                  <button class="font-pair-btn" data-font-pair="playfair-sans">
+                    <span class="preview-text f-serif">Playfair</span>
+                    <span class="label">Traditional Executive</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="design-section mt-4">
+                <label class="field-label">Accent Brand Color</label>
+                <div class="color-palette-selector">
+                  <button class="color-swatch-btn active" data-color="#3b82f6" style="background-color: #3b82f6;"></button>
+                  <button class="color-swatch-btn" data-color="#8b5cf6" style="background-color: #8b5cf6;"></button>
+                  <button class="color-swatch-btn" data-color="#10b981" style="background-color: #10b981;"></button>
+                  <button class="color-swatch-btn" data-color="#ef4444" style="background-color: #ef4444;"></button>
+                  <button class="color-swatch-btn" data-color="#f59e0b" style="background-color: #f59e0b;"></button>
+                  <button class="color-swatch-btn" data-color="#1e293b" style="background-color: #1e293b;"></button>
+                  <!-- Custom Color Picker -->
+                  <div class="custom-color-input-wrapper">
+                    <input type="color" id="custom-color-picker" value="#3b82f6">
+                    <span class="picker-label">Custom</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="design-section mt-4">
+                <div class="spacing-control-group">
+                  <div>
+                    <label class="field-label" for="setting-margins">Page Margins</label>
+                    <select id="setting-margins" class="form-control">
+                      <option value="compact">Compact (15px)</option>
+                      <option value="normal" selected>Normal (24px)</option>
+                      <option value="spacious">Spacious (32px)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="field-label" for="setting-lineheight">Line Spacing</label>
+                    <select id="setting-lineheight" class="form-control">
+                      <option value="1.2">Dense</option>
+                      <option value="1.4" selected>Standard</option>
+                      <option value="1.6">Relaxed</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PERSONAL PROFILE TAB -->
+            <div class="tab-panel" id="tab-personal">
+              <h3 class="tab-panel-title">Personal Information</h3>
+              
+              <div class="form-row">
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-name">Full Name</label>
+                  <input type="text" id="pi-name" class="form-control bind-val" placeholder="John Doe">
+                </div>
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-title">Professional Title</label>
+                  <input type="text" id="pi-title" class="form-control bind-val" placeholder="Lead Software Engineer">
+                </div>
+              </div>
+
+              <div class="form-row mt-3">
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-email">Email Address</label>
+                  <input type="email" id="pi-email" class="form-control bind-val" placeholder="john.doe@example.com">
+                </div>
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-phone">Phone Number</label>
+                  <input type="tel" id="pi-phone" class="form-control bind-val" placeholder="+1 (555) 123-4567">
+                </div>
+              </div>
+
+              <div class="form-row mt-3">
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-location">Location</label>
+                  <input type="text" id="pi-location" class="form-control bind-val" placeholder="San Francisco, CA">
+                </div>
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-website">Portfolio Website</label>
+                  <input type="url" id="pi-website" class="form-control bind-val" placeholder="johndoe.dev">
+                </div>
+              </div>
+
+              <div class="form-row mt-3">
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-linkedin">LinkedIn URL</label>
+                  <input type="text" id="pi-linkedin" class="form-control bind-val" placeholder="linkedin.com/in/johndoe">
+                </div>
+                <div class="form-col-6">
+                  <label class="field-label" for="pi-github">GitHub URL</label>
+                  <input type="text" id="pi-github" class="form-control bind-val" placeholder="github.com/johndoe">
+                </div>
+              </div>
+
+              <div class="form-group mt-4">
+                <label class="field-label" for="pi-summary">Professional Summary</label>
+                <textarea id="pi-summary" rows="5" class="form-control bind-val" placeholder="Write a short, high-impact summary that highlights your key achievements, skills, and what value you bring to prospective organizations."></textarea>
+              </div>
+            </div>
+
+            <!-- WORK EXPERIENCE TAB -->
+            <div class="tab-panel" id="tab-experience">
+              <div class="tab-panel-header">
+                <h3 class="tab-panel-title">Work History</h3>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-add-exp">+ Add Position</button>
+              </div>
+              <p class="tab-subtitle-info">List your relevant experience, starting with the most recent.</p>
+
+              <!-- Dynamic Experience Container -->
+              <div class="dynamic-list-container" id="experience-list">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <!-- EDUCATION TAB -->
+            <div class="tab-panel" id="tab-education">
+              <div class="tab-panel-header">
+                <h3 class="tab-panel-title">Education</h3>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-add-edu">+ Add Education</button>
+              </div>
+              <p class="tab-subtitle-info">Enter your degrees, academic achievements, and schools.</p>
+
+              <!-- Dynamic Education Container -->
+              <div class="dynamic-list-container" id="education-list">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <!-- PROJECTS TAB -->
+            <div class="tab-panel" id="tab-projects">
+              <div class="tab-panel-header">
+                <h3 class="tab-panel-title">Projects</h3>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-add-project">+ Add Project</button>
+              </div>
+              <p class="tab-subtitle-info">Highlight notable projects, side hustles, or open source contributions.</p>
+
+              <!-- Dynamic Projects Container -->
+              <div class="dynamic-list-container" id="projects-list">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <!-- SKILLS TAB -->
+            <div class="tab-panel" id="tab-skills">
+              <div class="tab-panel-header">
+                <h3 class="tab-panel-title">Key Skills</h3>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-add-skill">+ Add Skill</button>
+              </div>
+              <p class="tab-subtitle-info">Add tech stacks, tools, methodologies, and rate your proficiency.</p>
+
+              <!-- Dynamic Skills Container -->
+              <div class="dynamic-list-container" id="skills-list">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <!-- MORE / OPTIONAL CATEGORIES -->
+            <div class="tab-panel" id="tab-more">
+              <h3 class="tab-panel-title">Additional Sections</h3>
+              
+              <!-- Languages Section -->
+              <div class="accordion-sub-section">
+                <div class="accordion-sub-header">
+                  <h4>🌐 Languages</h4>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-add-lang">+ Add Language</button>
+                </div>
+                <div class="dynamic-list-container list-sub" id="languages-list">
+                  <!-- JS generated -->
+                </div>
+              </div>
+
+              <!-- Certifications Section -->
+              <div class="accordion-sub-section mt-4">
+                <div class="accordion-sub-header">
+                  <h4>🏆 Certifications & Awards</h4>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-add-cert">+ Add Cert</button>
+                </div>
+                <div class="dynamic-list-container list-sub" id="certifications-list">
+                  <!-- JS generated -->
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- Right Panel: Live Scale Preview -->
+        <div class="editor-preview-container">
+          <div class="preview-toolbar-bar">
+            <span class="preview-zoom-label">Preview Zoom:</span>
+            <input type="range" id="zoom-slider" min="50" max="120" value="85" class="zoom-range-input">
+            <span class="zoom-percent" id="zoom-percent-text">85%</span>
+            <div class="divider"></div>
+            <button id="btn-fit-zoom" class="btn btn-icon-only" title="Fit Zoom">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="a4-document-viewport">
+            <!-- The actual printable A4 document container -->
+            <div id="a4-printable-document" class="a4-sheet theme-minimalist font-pair-inter-sans" style="--primary-color: #3b82f6; --page-margin: 24px; --line-height-factor: 1.4;">
+              <!-- Target generated content will render dynamically here -->
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- STUNNING IMPORT / IMPROVE MODAL -->
+    <div id="import-modal" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Improve Your Resume</h3>
+          <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-tabs">
+          <button class="modal-tab-btn active" data-tab="modal-tab-file">📂 Upload Resume File</button>
+          <button class="modal-tab-btn" data-tab="modal-tab-text">📋 Paste Raw Text</button>
+        </div>
+        <div class="modal-content">
+          <!-- File drag/selector -->
+          <div class="modal-tab-panel active" id="modal-tab-file">
+            <p class="modal-help-text">Select or drag & drop your current resume file **(.pdf, .docx, .txt, or .json backup)**. Our smart local engine will parse your details instantly!</p>
+            <div class="upload-drag-area" id="modal-drag-area">
+              <div class="upload-icon">📂</div>
+              <p>Drag & drop your resume here or click to browse</p>
+              <span class="upload-filename-display" id="modal-file-name-display">No file selected</span>
+            </div>
+            <button id="btn-submit-import-file" class="btn btn-primary btn-glow mt-3 w-100" disabled>Parse & Improve Resume</button>
+          </div>
+          <!-- Text paste importer -->
+          <div class="modal-tab-panel" id="modal-tab-text">
+            <p class="modal-help-text">Open your current PDF or Word resume, select all text, copy it, and paste it below. Our smart local engine will parse your details work instantly!</p>
+            <textarea id="import-text-area" class="form-control" rows="8" placeholder="PASTE RESUME TEXT HERE...&#10;&#10;Example:&#10;John Doe&#10;Software Engineer&#10;john.doe@email.com&#10;&#10;EXPERIENCE:&#10;Lead Dev at VeloTech (2022 - Present)&#10;- Architected cloud platform..."></textarea>
+            <button id="btn-submit-import-text" class="btn btn-primary btn-glow mt-3 w-100">Smart Parse & Edit</button>
+          </div>
+        </div>
+        <!-- Loader Screen (Hidden by default) -->
+        <div class="modal-loader-screen" id="modal-loader">
+          <div class="loader-spinner"></div>
+          <h4 id="loader-status-text">Parsing headers...</h4>
+          <p>Everything is processed locally for 100% privacy.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUNNING AUTH MODAL (Gate for PDF downloads) -->
+    <div id="auth-modal" class="modal-backdrop">
+      <div class="modal-card auth-card">
+        <div class="modal-header">
+          <h3>Sign in to Download</h3>
+          <button id="btn-close-auth" class="modal-close-btn">&times;</button>
+        </div>
+        <p class="auth-subtitle">ResuBuild is 100% free to use. Please sign in or create an account to unlock instant vector PDF downloads.</p>
+        
+        <div class="modal-tabs">
+          <button class="modal-tab-btn active" id="tab-auth-login" data-auth-mode="login">🔑 Sign In</button>
+          <button class="modal-tab-btn" id="tab-auth-signup" data-auth-mode="signup">📝 Create Account</button>
+        </div>
+        
+        <div class="modal-content mt-3">
+          <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+            <div class="form-group">
+              <label class="field-label" for="auth-email">Email Address</label>
+              <input type="email" id="auth-email" class="form-control" required placeholder="name@domain.com">
+            </div>
+            <div class="form-group mt-3">
+              <label class="field-label" for="auth-password">Password (min. 6 characters)</label>
+              <input type="password" id="auth-password" class="form-control" required placeholder="••••••••" minlength="6">
+            </div>
+            
+            <div id="auth-error-msg" class="auth-message error-msg mt-3" style="display: none;"></div>
+            <div id="auth-success-msg" class="auth-message success-msg mt-3" style="display: none;"></div>
+            
+            <button type="submit" id="btn-auth-submit" class="btn btn-primary btn-glow mt-4 w-100">Sign In & Download</button>
+          </form>
+          
+          <div class="auth-divider">
+            <span>or</span>
+          </div>
+
+          <button type="button" id="btn-google-auth" class="btn btn-google w-100" onclick="handleGoogleSignIn()">
+            <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+            </svg>
+            Continue with Google
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUNNING PLANS & PRICING MODAL -->
+    <div id="pricing-modal" class="modal-backdrop">
+      <div class="modal-card pricing-card-modal">
+        <div class="modal-header">
+          <h3>👑 Choose Your Plan</h3>
+          <button id="btn-close-pricing" class="modal-close-btn">&times;</button>
+        </div>
+        <p class="pricing-subtitle text-center mt-1">Upgrade to Premium to bypass the 2-download limit and unlock unlimited, high-resolution vector PDF exports.</p>
+        
+        <div class="pricing-plans-grid mt-4">
+          <!-- Free Plan Card -->
+          <div class="pricing-plan-card" id="pricing-card-free">
+            <div class="plan-header">
+              <span class="plan-badge">Basic</span>
+              <h4>Free Plan</h4>
+              <div class="plan-price">₹0<span>/month</span></div>
+            </div>
+            <ul class="plan-features">
+              <li>✓ <strong>2 Resume downloads</strong> per month</li>
+              <li>✓ High-fidelity single-page scaling</li>
+              <li>✓ Choose from standard colors</li>
+              <li>✗ No unlimited exports</li>
+              <li>✗ Standard support only</li>
+            </ul>
+            <div class="plan-footer mt-4">
+              <button class="btn btn-secondary w-100" id="btn-free-active" disabled>Active Plan</button>
+            </div>
+          </div>
+          
+          <!-- Premium Plan Card -->
+          <div class="pricing-plan-card premium-highlight" id="pricing-card-premium">
+            <div class="premium-glowing-glow"></div>
+            <div class="plan-header">
+              <span class="plan-badge premium-badge">👑 Recommended</span>
+              <h4>Premium Plan</h4>
+              <div class="plan-price">₹99<span>/month</span></div>
+            </div>
+            <ul class="plan-features">
+              <li>✓ <strong>Unlimited downloads</strong> & prints</li>
+              <li>✓ Complete access to all templates</li>
+              <li>✓ High-resolution vector-text exports</li>
+              <li>✓ Custom hex accent palette builder</li>
+              <li>✓ Priority 24/7 client support</li>
+            </ul>
+            <div class="plan-footer mt-4">
+              <button class="btn btn-primary btn-glow w-100" id="btn-upgrade-premium" onclick="handlePremiumCheckout()">
+                ⚡ Upgrade to Premium
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <p class="text-center mt-3 pricing-footer-terms">
+          Secured by Razorpay. 30-day money-back guarantee. Cancel anytime.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Supabase client-side JS library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- PDF & Word Parsers libraries -->
+  <script src="js/pdf.min.js"></script>
+  <script src="js/mammoth.browser.min.js"></script>
+
+  <!-- Core Scripts -->
+  <script src="js/templates.js"></script>
+  <script src="js/editor.js?v=1.2"></script>
+  <script src="js/pdf.js?v=2.0"></script>
+  <script src="js/app.js?v=2.0"></script>
+</body>
+</html>
