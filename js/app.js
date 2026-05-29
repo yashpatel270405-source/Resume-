@@ -1257,7 +1257,8 @@ async function syncAuthUI() {
     const upgradeBtns = [
       document.getElementById('btn-upgrade-homepage'),
       document.getElementById('btn-upgrade-dashboard'),
-      document.getElementById('btn-upgrade-editor')
+      document.getElementById('btn-upgrade-editor'),
+      document.getElementById('btn-upgrade-mobile')
     ];
     
     const quotaBadges = [
@@ -1714,5 +1715,24 @@ async function handlePremiumCheckout() {
 window.openPricingModal = openPricingModal;
 window.closePricingModal = closePricingModal;
 window.handlePremiumCheckout = handlePremiumCheckout;
+
+// Mobile Menu Navigation Drawer Controls
+function toggleMobileDrawer() {
+  const drawer = document.getElementById('mobile-menu-drawer');
+  if (drawer) {
+    drawer.classList.add('active');
+  }
+}
+
+function closeMobileDrawer() {
+  const drawer = document.getElementById('mobile-menu-drawer');
+  if (drawer) {
+    drawer.classList.remove('active');
+  }
+}
+
+window.toggleMobileDrawer = toggleMobileDrawer;
+window.closeMobileDrawer = closeMobileDrawer;
+
 
 

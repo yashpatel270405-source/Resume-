@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles/main.css?v=2.1">
+  <link rel="stylesheet" href="styles/main.css?v=2.2">
   <link rel="stylesheet" href="styles/templates.css">
   <!-- html2pdf.js Library for high-fidelity browser PDF generation -->
   <script src="js/html2pdf.bundle.min.js"></script>
@@ -64,6 +64,13 @@
             <a href="#editor?new=true" class="btn btn-primary btn-glow">Build Resume</a>
             <button class="btn btn-secondary btn-sign-out" style="display: none;" onclick="handleSignOut()">Sign Out</button>
           </div>
+          
+          <!-- Mobile Hamburger Trigger -->
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle" onclick="toggleMobileDrawer()" aria-label="Toggle Menu">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -975,6 +982,46 @@
           Secured by Razorpay. 30-day money-back guarantee. Cancel anytime.
         </p>
       </div>
+    <!-- PREMIUM GLASSMORPHIC MOBILE DRAWER MENU -->
+    <div id="mobile-menu-drawer" class="mobile-drawer">
+      <div class="drawer-card">
+        <div class="drawer-header">
+          <a href="#home" class="logo" onclick="closeMobileDrawer()">
+            <span class="logo-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+            </span>
+            <span class="logo-text">ResuBuild</span>
+          </a>
+          <button id="btn-close-drawer" class="drawer-close-btn" onclick="closeMobileDrawer()">&times;</button>
+        </div>
+        <div class="drawer-content">
+          <nav class="drawer-links">
+            <a href="#features" onclick="closeMobileDrawer()">Features</a>
+            <a href="#templates" onclick="closeMobileDrawer()">Templates</a>
+            <a href="#testimonials" onclick="closeMobileDrawer()">Testimonials</a>
+          </nav>
+          <div class="drawer-actions mt-4">
+            <button class="btn btn-premium-upgrade w-100 mb-3" onclick="openPricingModal(); closeMobileDrawer();" id="btn-upgrade-mobile" style="display: none;">👑 Upgrade</button>
+            <a href="#dashboard" class="btn btn-secondary w-100 mb-3" onclick="closeMobileDrawer()">My Dashboard</a>
+            <button class="btn btn-secondary btn-upload-trigger w-100 mb-3" onclick="closeMobileDrawer()">Improve my Resume</button>
+            <a href="#editor?new=true" class="btn btn-primary btn-glow w-100 mb-3" onclick="closeMobileDrawer()">Build Resume</a>
+            <button class="btn btn-secondary btn-sign-out w-100" style="display: none;" onclick="handleSignOut(); closeMobileDrawer();">Sign Out</button>
+          </div>
+          
+          <div class="drawer-footer mt-4">
+            <div class="drawer-theme-control">
+              <span class="theme-label">App Theme</span>
+              <div class="drawer-theme-row">
+                <button class="drawer-theme-opt" onclick="setAppTheme('light'); closeMobileDrawer();">☀️ Light</button>
+                <button class="drawer-theme-opt" onclick="setAppTheme('dark'); closeMobileDrawer();">🌙 Dark</button>
+                <button class="drawer-theme-opt" onclick="setAppTheme('system'); closeMobileDrawer();">💻 System</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -990,6 +1037,6 @@
   <script src="js/templates.js"></script>
   <script src="js/editor.js?v=1.2"></script>
   <script src="js/pdf.js?v=2.0"></script>
-  <script src="js/app.js?v=2.0"></script>
+  <script src="js/app.js?v=2.1"></script>
 </body>
 </html>
