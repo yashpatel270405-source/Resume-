@@ -2633,7 +2633,7 @@ textarea.form-control {
     display: inline-flex; /* Show hamburger toggle on tablet and mobile */
   }
   
-  /* Wrap dashboard/editor actions on small screens to fit neatly */
+  /* Wrap dashboard header actions on small screens to fit neatly */
   .navbar-internal .nav-actions {
     display: flex !important;
     flex-wrap: wrap !important;
@@ -2647,6 +2647,57 @@ textarea.form-control {
     flex-direction: column !important;
     align-items: center !important;
     padding: 8px 16px !important;
+  }
+
+  /* Make Hero buttons stack vertically on mobile to prevent clipping */
+  .hero-buttons {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+    margin-bottom: 32px !important;
+  }
+  
+  .hero-buttons .btn {
+    width: 100% !important;
+  }
+
+  /* Make Hero stats layout fluidly on smaller screens */
+  .hero-stats {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 20px !important;
+  }
+
+  .stat-separator {
+    display: none !important; /* Hide separator lines on stacked viewports */
+  }
+
+  /* Make Editor Header responsive */
+  .editor-navbar .nav-container-fluid {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 12px 16px !important;
+    gap: 14px !important;
+  }
+
+  .navbar-left {
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  .navbar-right {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .resume-title-editable {
+    text-align: center !important;
+    width: 160px !important;
   }
 }
 
