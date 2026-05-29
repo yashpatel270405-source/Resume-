@@ -2699,6 +2699,42 @@ textarea.form-control {
     text-align: center !important;
     width: 160px !important;
   }
+
+  /* 5. Allow scrolling inside modal card on smaller screens */
+  .modal-backdrop {
+    align-items: flex-start !important; /* Start from top of screen */
+    padding: 24px 0 !important;
+    overflow-y: auto !important; /* Allow scroll on backdrop */
+  }
+  
+  .modal-card {
+    max-height: calc(100vh - 48px) !important; /* Cap card height */
+    overflow-y: auto !important; /* Allow scroll on card itself */
+    padding: 20px !important;
+    margin: auto !important;
+  }
+  
+  /* Optimize pricing layout inside modal for mobile */
+  .pricing-card-modal {
+    padding: 20px !important;
+  }
+  
+  .pricing-plans-grid {
+    gap: 12px !important;
+  }
+  
+  .pricing-plan-card {
+    padding: 16px !important;
+  }
+  
+  .plan-header {
+    margin-bottom: 12px !important;
+  }
+  
+  .plan-features li {
+    padding: 4px 0 !important;
+    font-size: 0.8rem !important;
+  }
 }
 
 /* Light Theme Overrides for Mobile Drawer */
