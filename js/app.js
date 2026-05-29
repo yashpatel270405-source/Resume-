@@ -1115,7 +1115,7 @@ async function handleAuthSubmit(event) {
       // Close modal and sync header button states
       setTimeout(() => {
         if (authModal) authModal.classList.remove('active');
-        syncAuthUI();
+        syncAuthUI(data?.session);
         
         // Execute the pending action (download / print)!
         if (pendingAuthCallback) {
@@ -1138,7 +1138,7 @@ async function handleAuthSubmit(event) {
         
         setTimeout(() => {
           if (authModal) authModal.classList.remove('active');
-          syncAuthUI();
+          syncAuthUI(data?.session);
           
           if (pendingAuthCallback) {
             pendingAuthCallback();
@@ -1187,7 +1187,7 @@ async function checkAuthSessionManually() {
       
       if (session) {
         if (authModal) authModal.classList.remove('active');
-        syncAuthUI();
+        syncAuthUI(session);
         
         // Trigger pending action
         if (pendingAuthCallback) {
@@ -1202,7 +1202,7 @@ async function checkAuthSessionManually() {
     const { data: { session }, error: refreshError } = await supabaseClient.auth.refreshSession();
     if (session) {
       if (authModal) authModal.classList.remove('active');
-      syncAuthUI();
+      syncAuthUI(session);
       if (pendingAuthCallback) {
         pendingAuthCallback();
         pendingAuthCallback = null;
@@ -1236,7 +1236,7 @@ async function handleSignOut() {
     const { error } = await supabaseClient.auth.signOut();
     if (error) throw error;
     
-    await syncAuthUI();
+    await syncAuthUI(null); // Explicitly update UI with null session to prevent race conditions
     alert("You have successfully signed out!");
     
     // Redirect to home or dashboard
@@ -1247,10 +1247,16 @@ async function handleSignOut() {
 }
 
 // Sync "Sign Out" buttons, download quotas, and premium badges depending on session
-async function syncAuthUI() {
+async function syncAuthUI(passedSession = undefined) {
   if (!supabaseClient) return;
   try {
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    let session;
+    if (passedSession !== undefined) {
+      session = passedSession;
+    } else {
+      const { data } = await supabaseClient.auth.getSession();
+      session = data?.session;
+    }
     const isLoggedIn = !!session;
     
     // Hide/Show Sign Out buttons
@@ -1473,7 +1479,7 @@ window.syncAuthUI = syncAuthUI;
 // Listen to session changes to trigger state updates
 if (supabaseClient) {
   supabaseClient.auth.onAuthStateChange((event, session) => {
-    syncAuthUI();
+    syncAuthUI(session);
     
     // Auto-download after Google OAuth redirect login if flagged
     if (session && localStorage.getItem('pending_download_on_login') === 'true') {
