@@ -2455,5 +2455,19 @@ textarea.form-control {
   border-color: transparent !important;
 }
 
+/* Force high-visibility color overrides for all Modal Headers & Plan Titles */
+.modal-header h3,
+.pricing-card-modal h3,
+.pricing-card-modal .modal-header h3 {
+  color: #ffffff !important; /* Pure white in dark mode */
+}
+
+:root.theme-light .modal-header h3,
+:root.theme-light .pricing-card-modal h3,
+:root.theme-light .pricing-card-modal .modal-header h3 {
+  color: #0f172a !important; /* Deep navy in light mode */
+}
+
+
 
 
