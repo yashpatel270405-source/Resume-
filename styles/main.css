@@ -2712,6 +2712,72 @@ textarea.form-control {
   background: rgba(15, 23, 42, 0.05);
 }
 
+/* ==========================================================================
+   MOBILE PREVIEW WORKSPACE DEEP ADAPTATIONS
+   ========================================================================== */
+
+/* Floating Preview Toggle Button (Hidden on desktop) */
+.mobile-preview-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--primary-color) 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.mobile-preview-toggle:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+/* Tablet & Mobile Editor Viewport Adaptations */
+@media (max-width: 1024px) {
+  .mobile-preview-toggle {
+    display: inline-flex !important; /* Show floating toggle only on mobile sizes */
+  }
+  
+  /* Toggle visibility states based on active class */
+  .mobile-preview-active-mode .editor-sidebar-left {
+    display: none !important;
+  }
+  
+  .mobile-preview-active-mode .editor-preview-container {
+    display: flex !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 12px 6px !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Make document viewport center cleanly on mobile */
+  .mobile-preview-active-mode .a4-document-viewport {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding: 8px 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+}
+
+
 
 
 

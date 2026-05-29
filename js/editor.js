@@ -750,7 +750,7 @@ function fitZoom() {
   let scalePercent = Math.floor((fitWidth / sheetWidth) * 100);
   
   // Clamp scale boundary limits
-  if (scalePercent < 50) scalePercent = 50;
+  if (scalePercent < 20) scalePercent = 20;
   if (scalePercent > 120) scalePercent = 120;
   
   DOM.zoomSlider.value = scalePercent;
@@ -769,6 +769,7 @@ window.addEventListener('resize', () => {
 // Bind to window context
 window.initEditor = initEditor;
 window.updatePreview = updatePreview;
+window.fitZoom = fitZoom;
 
 /* ==========================================================================
    BIDIRECTIONAL VISUAL WYSIWYG EDITOR INTERFACE

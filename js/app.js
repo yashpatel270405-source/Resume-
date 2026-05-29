@@ -1734,5 +1734,39 @@ function closeMobileDrawer() {
 window.toggleMobileDrawer = toggleMobileDrawer;
 window.closeMobileDrawer = closeMobileDrawer;
 
+// Toggle mobile live preview mode
+function toggleMobilePreviewMode() {
+  const editor = document.getElementById('editor');
+  const btnToggle = document.getElementById('mobile-preview-toggle');
+  if (!editor || !btnToggle) return;
+  
+  const isActive = editor.classList.toggle('mobile-preview-active-mode');
+  
+  const icon = btnToggle.querySelector('.toggle-icon');
+  const text = btnToggle.querySelector('.toggle-text');
+  
+  if (isActive) {
+    if (icon) icon.textContent = '✏️';
+    if (text) text.textContent = 'Edit Form Details';
+    btnToggle.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    btnToggle.style.color = '#ffffff';
+    btnToggle.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
+    
+    // Automatically trigger fit zoom to scale the A4 preview sheet down to the phone width
+    if (window.fitZoom) {
+      setTimeout(window.fitZoom, 150);
+    }
+  } else {
+    if (icon) icon.textContent = '👁️';
+    if (text) text.textContent = 'View Live Preview';
+    btnToggle.style.background = '';
+    btnToggle.style.color = '';
+    btnToggle.style.boxShadow = '';
+  }
+}
+
+window.toggleMobilePreviewMode = toggleMobilePreviewMode;
+
+
 
 
